@@ -1,3 +1,5 @@
+const { Message } = require('discord.js');
+
 class Pagination {
     constructor() {
         this.pages = null;
