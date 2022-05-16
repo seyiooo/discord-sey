@@ -1,17 +1,18 @@
-# DiscordJS-Pagination
-An easy customizable utility for paginating embeds in Discord.JS v13.
+# Discord-Sey
+An easy multi-tool package for Discord.JS v13.
 
+# Pagination
 ## Quick Start
 You just have to import the functions as well:
 ```js
-const { Pagination, createPagination } = require('discordjs-pagination');
+const { Pagination, createPagination } = require('discord-sey');
 // Import functions
 ```
 
 ### Example
 ```js
 const { Client, MessageEmbed } = require('discord.js');
-const { Pagination, createPagination } = require('discordjs-pagination');
+const { Pagination, createPagination } = require('discord-sey');
 
 const client = new Client({
     intents: 32767,
