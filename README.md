@@ -2,6 +2,8 @@
 An easy multi-tool package for Discord.JS v13.
 
 # Pagination
+Create a customizable MessageEmbeds pagination.
+
 ## Quick Start
 You just have to import the functions as well:
 ```js
