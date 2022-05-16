@@ -1,24 +1,24 @@
 {
-  "name": "discordjs-pagination",
+  "name": "discord-sey",
   "version": "1.0.0",
-  "description": "An easy customizable utility for paginating embeds in Discord.JS v13.",
+  "description": "An easy multi-tool package for Discord.JS v13.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seyiooo/discordjs-pagination.git"
+    "url": "git+https://github.com/seyiooo/discord-sey.git"
   },
   "keywords": [
     "discord.js",
-    "discord-pagination",
-    "pagination"
+    "discordjs",
+    "discord"
   ],
   "author": "sey.#4485",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/seyiooo/discordjs-pagination/issues"
+    "url": "https://github.com/seyiooo/discord-sey/issues"
   },
-  "homepage": "https://github.com/seyiooo/discordjs-pagination#readme"
+  "homepage": "https://github.com/seyiooo/discord-sey#readme"
 }
