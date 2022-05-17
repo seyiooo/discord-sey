@@ -62,11 +62,11 @@ class Pagination {
  */
 
 async function createPagination(message, pagination) {
-    if (!message || !pagination) throw new RangeError('[createPagination] Missing options.');
-    if (typeof message !== 'object') throw new TypeError('[createPagination] "message" must be an object.');
-    if (typeof pagination !== 'object') throw new TypeError('[createPagination] "pagination" must be an object.');
-    if (!message.channel) throw new Error('[createPagination] The channel is inaccessible.');
-    if (!pagination.pages) throw new Error('[createPagination] Pages not provided.')
+    if (!message || !pagination) throw new RangeError('[CREATEPAGINATION] Missing options.');
+    if (typeof message !== 'object') throw new TypeError('[CREATEPAGINATION] "message" must be an object.');
+    if (typeof pagination !== 'object') throw new TypeError('[CREATEPAGINATION] "pagination" must be an object.');
+    if (!message.channel) throw new Error('[CREATEPAGINATION] The channel is inaccessible.');
+    if (!pagination.pages) throw new Error('[CREATEPAGINATION] Pages not provided.')
 
     const buttons = new this.ActionRow();
     buttons.components.push(new MessageButton()
@@ -114,4 +114,7 @@ async function createPagination(message, pagination) {
     return msg;
 };
 
-module.exports = { Pagination, createPagination };
+module.exports = {
+    Pagination,
+    createPagination
+};
