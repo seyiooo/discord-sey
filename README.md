@@ -39,4 +39,6 @@ client.on('message', message => {
     
     createPagination(message, pages); // Create the pagination
 });
+
+client.login('TOKEN');
 ```
