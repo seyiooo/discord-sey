@@ -17,6 +17,9 @@
   ],
   "author": "sey.#4485",
   "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.7.0"
+  },
   "bugs": {
     "url": "https://github.com/seyiooo/discord-sey/issues"
   },
