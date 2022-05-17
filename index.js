@@ -112,6 +112,6 @@ async function createPagination(message, pagination) {
     });
 
     return msg;
-}
+};
 
 module.exports = { Pagination, createPagination };
