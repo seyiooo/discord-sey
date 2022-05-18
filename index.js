@@ -11,7 +11,7 @@ class Pagination {
         this.timeout = null;
         this.style = 'PRIMARY';
 
-        this.index = 1;
+        this.index = 0;
         this.filter = (i) => i.user.id === this.message.author.id;
         this.ended = false;
         this.deleted = false;
@@ -23,7 +23,7 @@ class Pagination {
      */
 
     get currentEmbed() {
-        return this.pages[this.index - 1];
+        return this.pages[this.index];
     };
 
     /**
@@ -93,7 +93,7 @@ class Pagination {
      */
 
     _fixPages() {
-        this.pages.forEach((p) => p.setFooter({ text: `Page: ${this.index}/${this.pages.length}` }));
+        this.pages.forEach((p) => p.setFooter({ text: `Page: ${this.index + 1}/${this.pages.length}` }));
 
         return this;
     };
@@ -105,10 +105,10 @@ class Pagination {
      */
 
     _fixButtons() {
-        if (this.index === 1) this.buttons.components[0].setDisabled(true)
+        if (!this.index) this.buttons.components[0].setDisabled(true)
         else this.buttons.components[0].setDisabled(false);
 
-        if (this.index === this.pages.length) this.buttons.components[1].setDisabled(true)
+        if (this.index === this.pages.length - 1) this.buttons.components[1].setDisabled(true)
         else this.buttons.components[1].setDisabled(false);
 
         return this;
@@ -298,9 +298,11 @@ class Pagination {
         if (!this.verifInstanceArray([message], Message)) throw new RangeError('[PAGINATION] Message not provided.');
         if (!message.channel) throw new RangeError('[PAGINATION] The message channel is inaccessible.');
         if (!this.pages) throw new RangeError('[PAGINATION] Pages not provided.');
+        if (this.started) throw new Error('[PAGINATION] Pagination is already started.');
 
-        this._fixPages;
+        this._fixPages();
         this.message = message;
+        this.started = true;
     
         this.buttons = new MessageActionRow()
         .addComponents(
@@ -315,9 +317,11 @@ class Pagination {
             .setStyle(this.style)
         );
     
-        const msg = await this.message.channel.send({embeds: [this.pages[this.index - 1].setFooter({ text: `Page: ${this.index}/${this.pages.length}` })], components: [this.buttons]});
-
+        const msg = await this.message.channel.send({embeds: [this.pages[this.index]], components: [this.buttons]});
+        
         this.pagination = msg;
+
+        if (!this.pagination) throw new Error('[PAGINATION] Couldn\'t fetch message.');
 
         const collector = msg.createMessageComponentCollector({
             filter: this.filter,
