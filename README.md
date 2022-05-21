@@ -9,9 +9,13 @@ The package is not finished, if you find a bug, contact sey.#4485 !
 - [Starboard](#starboard)
 - [TempVoc](#tempvoc)
 
-# Install
+# Requirements
+- [Node](https://nodejs.org/en/) - 16.15.0
+- [NPM](https://www.npmjs.com/) - 8.5.5
+
+# Installation
 To install the package, execute this command in the terminal:
-```cmd
+```bash
 npm install discord-sey
 ```
 
