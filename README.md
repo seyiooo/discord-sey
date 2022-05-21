@@ -1,11 +1,11 @@
 <div align="center"><h1>Discord-Sey</h1></div>
 An easy multi-tool package for Discord.JS v13 !
 The package is not finished, if you find a bug, contact sey.#4485 !
-- [Install](#install)
-- [MemberCount](#membercount)
-- [Pagination](#pagination)
-- [Starboard](#starboard)
-- [TempVoc](#tempvoc)
+* [Install](#install)
+* [MemberCount](#membercount)
+* [Pagination](#pagination)
+* [Starboard](#starboard)
+* [TempVoc](#tempvoc)
 
 # Install
 To install the package, execute this command in the terminal:
