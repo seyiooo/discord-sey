@@ -100,6 +100,14 @@ client.on('messageCreate', message => {
     .addTimeout(60000) // Add timeout (optional)
     .setStyle('SECONDARY') // Set the buttons style (optional, default: "PRIMARY")
     .start(message) // Create the pagination (required)
+
+    if (message.content.startsWith('!previous')) pages.previous(); // Pagination by commands (optional)
+
+    if (message.content.startsWith('!next')) pages.next(); // Pagination by commands (optional)
+
+    if (message.content.startsWith('!end')) pages.end(); // End the pagination (optional)
+
+    if (message.content.startsWith('!delete')) pages.delete(); // Delete the pagination (optional)
 });
 
 // You also can do the same thing with interactionCreate event
@@ -120,14 +128,6 @@ client.on('interactionCreate', interaction => {
     .addTimeout(60000) // Add timeout (optional)
     .setStyle('SECONDARY') // Set the buttons style (optional, default: "PRIMARY")
     .start(interaction) // Create the pagination (required)
-
-    if (message.content.startsWith('!previous')) pages.previous(); // Pagination by commands (optional)
-
-    if (message.content.startsWith('!next')) pages.next(); // Pagination by commands (optional)
-
-    if (message.content.startsWith('!end')) pages.end(); // End the pagination (optional)
-
-    if (message.content.startsWith('!delete')) pages.delete(); // Delete the pagination (optional)
 });
 
 // Log-in the Client
