@@ -96,7 +96,7 @@ client.on('messageCreate', message => {
     .addPage(new MessageEmbed().setTitle('Page 3')) // Add one page (optional)
     .addPages([new MessageEmbed().setTitle('Page 4'), new MessageEmbed().setTitle('Page 5')]) // Add more pages (optional)
     .setEmojis(['⏪', '⏩']) // Set the previous and next buttons (optional, default: ['⬅️', '➡️'])
-    .setTimeout(60000) // 2 minutes timeout (optional, default: null)
+    .setTimeout(60000) // One minute timeout (optional, default: null)
     .addTimeout(60000) // Add timeout (optional)
     .setStyle('SECONDARY') // Set the buttons style (optional, default: "PRIMARY")
     .start(message) // Create the pagination (required)
