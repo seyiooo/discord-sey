@@ -3,6 +3,7 @@ An easy multi-tool package for Discord.JS v13 !
 The package is not finished, if you find a bug, contact sey.#4485 !
 
 # Summary
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [MemberCount](#membercount)
 - [Pagination](#pagination)
