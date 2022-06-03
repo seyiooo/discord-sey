@@ -38,11 +38,7 @@ const { MemberCount } = require('discord-sey');
 
 // Create a Client
 const client = new Client({
-    intents: 32767,
-    partials: [
-        'MESSAGE',
-        'CHANNEL'
-    ]
+    intents: 32767
 });
 
 // Register the ready event
@@ -51,7 +47,7 @@ client.on('ready', () => {
     .setMemberChannelId('id') // Set the MemberChannel ID (optional)
     .setBotChannelId('id') // Set the BotChannel ID (optional)
     .setBoostChannelId('id') // Set the BoostChannel ID (optional)
-    .start(client) // Create the MemberCount (required)
+    .start(client) // Create the membercount (required)
 });
 
 // Log-in the Client
@@ -76,11 +72,7 @@ const { Pagination } = require('discord-sey');
 
 // Create a Client
 const client = new Client({
-    intents: 32767,
-    partials: [
-        'MESSAGE',
-        'CHANNEL'
-    ]
+    intents: 32767
 });
 
 // Register the messageCreate event
@@ -153,11 +145,7 @@ const { Starboard } = require('discord-sey');
 
 // Create a Client
 const client = new Client({
-    intents: 32767,
-    partials: [
-        'MESSAGE',
-        'CHANNEL'
-    ]
+    intents: 32767
 });
 
 // Register the ready event
@@ -196,11 +184,7 @@ const { TempVoc } = require('discord-sey');
 
 // Create a Client
 const client = new Client({
-    intents: 32767,
-    partials: [
-        'MESSAGE',
-        'CHANNEL'
-    ]
+    intents: 32767
 });
 
 // Register the ready event
@@ -211,7 +195,7 @@ client.on('ready', () => {
     .setChannelId('id') // Set the channel ID (required)
     .setCategoryId('id') // Set the category ID (required)
     .setName(name) // Set the embed (optional, default: "{user}'s Channel")
-    .start(client) // Create the starboard (required)
+    .start(client) // Create the tempvoc (required)
 });
 
 // Log-in the Client
