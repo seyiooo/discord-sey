@@ -282,6 +282,7 @@ class Pagination {
             .setEmoji(this.emojis[1])
             .setCustomId('right')
             .setStyle(this.style)
+            .setDisabled(this.pages.length <= 1)
         );
 
         const msg = await this.context.channel.send({embeds: [this.pages[this.index]], components: [this.buttons]})
