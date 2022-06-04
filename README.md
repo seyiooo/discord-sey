@@ -7,6 +7,7 @@ The package is not finished, if you find a bug, contact sey.#4485 !
 - [Installation](#installation)
 - [MemberCount](#membercount)
 - [Pagination](#pagination)
+- [RankCard](#rankcard)
 - [Starboard](#starboard)
 - [TempVoc](#tempvoc)
 
@@ -126,6 +127,53 @@ client.on('interactionCreate', interaction => {
 // Log-in the Client
 client.login('TOKEN');
 ```
+
+# RankCard
+Create a customizable RankCard !
+
+## Quick Start
+You just have to import the functions as well:
+```js
+// Import the functions
+const { RankCard } = require('discord-sey');
+```
+
+### Example
+```js
+// Import the functions
+const { Client, MessageAttachment } = require('discord.js');
+const { RankCard } = require('discord-sey');
+
+// Create a Client
+const client = new Client({
+    intents: 32767
+});
+
+// Register the ready event
+client.on('messageCreate', message => {
+    new RankCard()
+    .setTag(message.author.tag) // Set the tag (required)
+    .setAvatar(message.author.displatAvatarURL({ dynamic: true, format: 'png' })) // Set the avatar (required)
+    .setLevel(3) // Set the level (required)
+    .setCurrentXp(114) // Set the current xp (required)
+    .setRequiredXp(310) // Set the required xp (required)
+    .setColor('#e1af8f') // Set the color (optional, default: "#5865f2")
+    .build() // Create the rank card (required)
+    .then((data) => {
+        message.channel.send({
+            files: [
+                new MessageAttachment(data, 'RankCard.png')
+            ]
+        });
+    })
+});
+
+// Log-in the Client
+client.login('TOKEN');
+```
+
+### Result
+![RankCard](./assets/images/RankCard.png)
 
 # Starboard
 Create a customizable Starboard !
