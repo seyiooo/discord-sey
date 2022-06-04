@@ -17,7 +17,7 @@ class Pagination {
         this.style = 'PRIMARY';
 
         this.index = 0;
-        this.filter = (i) => i.user.id === this.context.author.id;
+        this.filter = (i) => i.user.id === (this.context.author?.id || this.context.user?.id);
         this.started = false;
         this.ended = false;
         this.deleted = false;
@@ -285,7 +285,7 @@ class Pagination {
             .setDisabled(this.pages.length <= 1)
         );
 
-        const msg = await this.context.channel.send({embeds: [this.pages[this.index]], components: [this.buttons]})
+        const msg = await this.context.reply({ embeds: [this.pages[this.index]], components: [this.buttons], fetchReply: true })
         .catch();
         
         this.pagination = msg;

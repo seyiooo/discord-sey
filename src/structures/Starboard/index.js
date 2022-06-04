@@ -1,4 +1,4 @@
-const { Message, MessageEmbed, MessageReaction, TextChannel, Client } = require('discord.js');
+const { Message, MessageEmbed, MessageReaction, Client } = require('discord.js');
 const Util = require('../../Util');
 
 /**

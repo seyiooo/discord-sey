@@ -1,4 +1,4 @@
-const { VoiceChannel, Client } = require('discord.js');
+const { Client } = require('discord.js');
 const Util = require('../../Util');
 
 /**
