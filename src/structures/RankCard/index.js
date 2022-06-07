@@ -157,7 +157,7 @@ class RankCard {
      * @returns {CanvasRenderingContext2D}
      */
 
-    drawProgress(ctx) {
+    drawProgress() {
         let decal = 0;
 
         if (this.ctx.measureText(this.currentXp).width > this.ctx.measureText('999').width) decal = -(this.ctx.measureText('999').width - this.ctx.measureText(this.currentXp.substring(3)).width) + 4;
@@ -175,7 +175,7 @@ class RankCard {
         this.ctx.fillStyle = this.progressObject.requiredColor;
         this.ctx.fillText(`/${this.requiredXp}`, x + decal - secondDecal + this.ctx.measureText(this.currentXp).width, y + this.progressObject.size);
     
-        return ctx;
+        return this.ctx;
     };
 
     /**
