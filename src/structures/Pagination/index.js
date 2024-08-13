@@ -1,31 +1,58 @@
-const { Message, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { Message, Interaction, ComponentEmojiResolvable, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder, ComponentType } = require('discord.js');
 const Util = require('../../Util');
 
 /**
  * Create pagination system.
  */
 
-class Pagination {
+module.exports = class Pagination {
     constructor() {
+        /**
+         * @private
+         */
         this.context = null;
+        /**
+         * @private
+         */
         this.pagination = null;
 
         this.pages = [];
         this.buttons = null;
-        this.emojis = ['⬅️', '➡️'];
+        this.labels = ['⬅️', '➡️'];
         this.timeout = null;
-        this.style = 'PRIMARY';
+        this.style = ButtonStyle.Primary;
 
+        /**
+         * @private
+         */
         this.index = 0;
+        /**
+         * @private
+         */
         this.filter = (i) => i.user.id === (this.context.author?.id || this.context.user?.id);
+        /**
+         * @private
+         */
         this.started = false;
+        /**
+         * @private
+         */
         this.ended = false;
+        /**
+         * @private
+         */
         this.deleted = false;
+
+        /**
+         * @private
+         */
+        this.util = new Util();
     };
 
     /**
+     * Get the current embed.
      * @private
-     * @returns {MessageEmbed}
+     * @returns {EmbedBuilder} The current embed.
      */
 
     get currentEmbed() {
@@ -33,8 +60,9 @@ class Pagination {
     };
 
     /**
+     * Check if the message is editable.
      * @private
-     * @returns {Boolean}
+     * @returns {boolean} Whether the message is editable.
      */
 
     get isEditable() {
@@ -42,8 +70,9 @@ class Pagination {
     };
 
     /**
+     * Check if the message is deletable.
      * @private
-     * @returns {Boolean}
+     * @returns {boolean} Whether the message is deletable.
      */
 
     get isDeletable() {
@@ -51,77 +80,104 @@ class Pagination {
     };
 
     /**
-     * Fix footers.
+     * Fix the footers of all pages.
      * @private
-     * @returns {Pagination}
+     * @returns {Pagination} The current pagination instance.
      */
 
-    _fixPages() {
-        if (this.ended || this.deleted) return;
+    async _fixPages() {
+        if (this.deleted) return;
 
-        this.pages.forEach((p) => p.setFooter({ text: `Page: ${this.index + 1}/${this.pages.length}` }));
+        for (const p of this.pages) {
+            p.setFooter({ text: `Page: ${this.index + 1}/${this.pages.length}${this.ended ? '・Time elapsed' : ''}` })
+        };
 
         return this;
     };
 
     /**
-     * Fix buttons.
+     * Fix the buttons states.
      * @private
-     * @returns {Pagination}
+     * @returns {Pagination} The current pagination instance.
      */
 
-    _fixButtons() {
+    async _fixButtons() {
         if (this.ended || this.deleted) return;
 
-        if (!this.index) this.buttons.components[0].setDisabled(true)
-        else this.buttons.components[0].setDisabled(false);
-
-        if (this.index === this.pages.length - 1) this.buttons.components[1].setDisabled(true)
-        else this.buttons.components[1].setDisabled(false);
+        if (this.secondaryLabels) {
+            this.buttons.components[0].setDisabled(this.index === 0);
+            this.buttons.components[1].setDisabled(this.index === 0);
+            this.buttons.components[2].setDisabled(this.index === this.pages.length - 1);
+            this.buttons.components[3].setDisabled(this.index === this.pages.length - 1);
+        } else {
+            this.buttons.components[0].setDisabled(this.index === 0);
+            this.buttons.components[1].setDisabled(this.index === this.pages.length - 1);
+        };
 
         return this;
     };
 
     /**
      * Update the pagination.
-     * @returns {Message}
+     * @returns {Promise<Message>} The updated message.
      */
 
-    update() {
+    async update() {
         if (this.deleted) return;
         
-        this._fixPages();
-        this._fixButtons();
+        await this._fixPages();
+        await this._fixButtons();
 
-        if (this.isEditable) return this.pagination.edit({embeds: [this.currentEmbed], components: [this.buttons]})
-        .catch();
+        if (this.isEditable) return this.pagination.edit({ embeds: [this.currentEmbed], components: [this.buttons] }).catch(console.error);
+    };
+
+    /**
+     * Display the first page.
+     * @returns {Promise<Message>} The updated message.
+     */
+
+    first() {
+        this.index = 0;
+
+        return this.update();
     };
 
     /**
      * Display the previous page.
-     * @returns {Message}
+     * @returns {Promise<Message>} The updated message.
      */
 
     previous() {
-        --this.index;
+        if (this.index > 0) --this.index;
 
         return this.update();
     };
 
     /**
      * Display the next page.
-     * @returns {Message}
+     * @returns {Promise<Message>} The updated message.
      */
 
     next() {
-        ++this.index;
+        if (this.index < this.pages.length - 1) ++this.index;
+
+        return this.update();
+    };
+
+    /**
+     * Display the last page.
+     * @returns {Promise<Message>} The updated message.
+     */
+
+    last() {
+        this.index = this.pages.length - 1;
 
         return this.update();
     };
 
     /**
      * End the pagination.
-     * @returns {Pagination}
+     * @returns {Promise<Message>} The updated message.
      */
 
     end() {
@@ -136,7 +192,7 @@ class Pagination {
 
     /**
      * Delete the pagination.
-     * @returns {Message}
+     * @returns {Promise<Message>} The deleted message.
      */
 
     delete() {
@@ -145,14 +201,13 @@ class Pagination {
         this.deleted = true;
         this.ended = true;
 
-        if (this.isDeletable) return this.pagination.delete()
-        .catch();
+        if (this.isDeletable) return this.pagination.delete().catch(console.error);
     };
 
     /**
      * Set the pages.
-     * @param {Array} pages The pages
-     * @returns {Pagination}
+     * @param {EmbedBuilder[]} pages The pages.
+     * @returns {Pagination} The current pagination instance.
      */
 
     setPages(pages) {
@@ -166,8 +221,8 @@ class Pagination {
 
     /**
      * Add a page.
-     * @param {MessageEmbed} page The page
-     * @returns {Pagination}
+     * @param {EmbedBuilder} page The page.
+     * @returns {Pagination} The current pagination instance.
      */
 
     addPage(page) {
@@ -179,135 +234,166 @@ class Pagination {
     };
 
     /**
-     * Add pages.
-     * @param {Array} pages The pages
-     * @returns {Pagination}
+     * Add multiple pages.
+     * @param {EmbedBuilder[]} pages The pages.
+     * @returns {Pagination} The current pagination instance.
      */
 
     addPages(pages) {
         if (!pages) throw new RangeError('[PAGINATION] Pages not provided.');
         if (!Array.isArray(pages) || !pages.length) throw new TypeError('[PAGINATION] Pages must be a non-empty array of MessageEmbed.');
 
-        pages.forEach((p) => this.addPage(p));
+        for (const p of pages) {
+            this.addPage(p);
+        };
 
         return this;
     };
 
     /**
-     * Set the emojis.
-     * @param {String[]} emojis The emojis
-     * @returns {Pagination}
+     * Set the labels for navigation buttons.
+     * @param {string[]} labels The labels for next and previous page.
+     * @param {string[]} [secondaryLabels] The labels for first and last page.
+     * @returns {Pagination} The current pagination instance.
      */
 
-    setEmojis(emojis) {
-        if (!emojis) throw new RangeError('[PAGINATION] Emojis not provided.');
-        if (!Array.isArray(emojis) || !emojis.length || !Util.verifTypeArray(emojis, 'string') || !emojis[0] || !emojis[1]) throw new TypeError('[PAGINATION] Emojis must be a non-empty array of string.');
-        if (emojis[3]) throw new TypeError('[PAGINATION] Exactly 2 emojis required.');
+    setLabels(labels, secondaryLabels) {
+        if (!labels) throw new RangeError('[PAGINATION] Emojis not provided.');
+        if (!Array.isArray(labels) || labels.length !== 2 || !this.util.verifTypeArray(labels, 'string')) throw new TypeError('[PAGINATION] Emojis must be an array of exactly 2 strings.');
+        if (secondaryLabels && (!Array.isArray(secondaryLabels) || secondaryLabels.length !== 2 || !this.util.verifTypeArray(secondaryLabels, 'string'))) throw new TypeError('[PAGINATION] Secondary emojis must be an array of exactly 2 strings.');
 
-        this.emojis = emojis;
+        this.labels = labels;
+        this.secondaryLabels = secondaryLabels;
 
         return this;
     };
 
     /**
-     * Set the timeout.
-     * @param {Number} timeout The timeout
-     * @returns {Pagination}
+     * Set the timeout for the pagination.
+     * @param {number} timeout The timeout.
+     * @returns {Pagination} The current pagination instance.
      */
 
     setTimeout(timeout) {
-        if (!timeout) throw new RangeError('[PAGINATION] Timeout not provided.');
+        if (timeout === undefined) throw new RangeError('[PAGINATION] Timeout not provided.');
         if (isNaN(timeout)) throw new TypeError('[PAGINATION] Timeout must be a number.');
 
         this.timeout = timeout;
-        
+
         return this;
     };
 
     /**
-     * Add timeout.
-     * @param {Number} timeout The timeout
-     * @returns {Pagination}
+     * Add to the timeout for the pagination.
+     * @param {number} timeout The timeout.
+     * @returns {Pagination} The current pagination instance.
      */
 
     addTimeout(timeout) {
-        if (!timeout) throw new RangeError('[PAGINATION] Timeout not provided.');
+        if (timeout === undefined) throw new RangeError('[PAGINATION] Timeout not provided.');
         if (isNaN(timeout)) throw new TypeError('[PAGINATION] Timeout must be a number.');
 
         this.timeout += timeout;
-        
+
         return this;
     };
 
     /**
-     * Set the buttons style.
-     * @param {String} style The style
-     * @returns {Pagination}
+     * Set the style of the buttons.
+     * @param {ButtonStyle} style The button style.
+     * @returns {Pagination} The current pagination instance.
      */
 
     setStyle(style) {
         if (!style) throw new RangeError('[PAGINATION] Style not provided.');
-        if (!Util.verifType(style, 'string')) throw new TypeError('[PAGINATION] Style must be a non-empty string. ("PRIMARY", "SECONDARY", "SUCCESS", "DANGER")');
-        if (!['PRIMAY', 'SECONDARY', 'SUCCESS', 'DANGER'].includes(style.toUpperCase())) throw new TypeError('[PAGINATION] Style must be a non-empty string. ("PRIMARY", "SECONDARY", "SUCCESS", "DANGER")');
+        if (![ButtonStyle.Primary, ButtonStyle.Secondary, ButtonStyle.Success, ButtonStyle.Danger].includes(style)) throw new TypeError('[PAGINATION] Invalid style. Must be a value of ButtonStyle from discord.js.');
 
-        this.style = style.toUpperCase();
+        this.style = style;
 
         return this;
     };
 
     /**
      * Start the pagination.
-     * @param {Message||Interaction} ctx The context
-     * @returns {Pagination}
+     * @param {Message|Interaction} ctx The context.
+     * @returns {Pagination} The current pagination instance.
      */
     
     async start(ctx) {
         if (!ctx) throw new RangeError('[PAGINATION] Context not provided.');
         if (!ctx.channel) throw new RangeError('[PAGINATION] Context channel isn\'t in the cache.');
-        if (!this.pages) throw new RangeError('[PAGINATION] Pages not provided.');
+        if (!this.pages.length) throw new RangeError('[PAGINATION] Pages not provided.');
         if (this.started) throw new Error('[PAGINATION] Pagination is already started.');
 
-        this._fixPages();
+        await this._fixPages();
         this.context = ctx;
         this.started = true;
 
-        this.buttons = new MessageActionRow()
-        .addComponents(
-            new MessageButton()
-            .setEmoji(this.emojis[0])
-            .setCustomId('left')
+        this.buttons = new ActionRowBuilder()
+
+        if (this.secondaryLabels) this.buttons.addComponents(
+            new ButtonBuilder()
+            .setLabel(this.secondaryLabels[0])
+            .setCustomId('first')
             .setStyle(this.style)
             .setDisabled(true),
-            new MessageButton()
-            .setEmoji(this.emojis[1])
-            .setCustomId('right')
+            new ButtonBuilder()
+            .setLabel(this.labels[0])
+            .setCustomId('previous')
+            .setStyle(this.style)
+            .setDisabled(true),
+            new ButtonBuilder()
+            .setLabel(this.labels[1])
+            .setCustomId('next')
+            .setStyle(this.style)
+            .setDisabled(this.pages.length <= 1),
+            new ButtonBuilder()
+            .setLabel(this.secondaryLabels[1])
+            .setCustomId('last')
+            .setStyle(this.style)
+            .setDisabled(this.pages.length <= 1)
+        );
+        else this.buttons.addComponents(
+            new ButtonBuilder()
+            .setLabel(this.labels[0])
+            .setCustomId('previous')
+            .setStyle(this.style)
+            .setDisabled(true),
+            new ButtonBuilder()
+            .setLabel(this.labels[1])
+            .setCustomId('next')
             .setStyle(this.style)
             .setDisabled(this.pages.length <= 1)
         );
 
-        const msg = await this.context.reply({ embeds: [this.pages[this.index]], components: [this.buttons], fetchReply: true })
-        .catch();
+        const msg = await this.context.reply({ embeds: [this.pages[this.index]], components: [this.buttons], fetchReply: true }).catch(console.error);
         
         this.pagination = msg;
         
         const collector = msg.createMessageComponentCollector({
-            componentType: 'BUTTON',
+            componentType: ComponentType.Button,
             filter: this.filter,
             time: this.timeout
         });
         
-        collector.on('collect', i => {
+        collector.on('collect', (i) => {
             if (this.deleted || this.ended) return;
             
-            i.deferUpdate();
+            i.deferUpdate().catch(console.error);
     
             switch (i.customId) {
-                case 'left':
+                case 'first':
+                    this.first();
+                    break;
+                case 'previous':
                     this.previous();
-                break;
-                case 'right':
+                    break;
+                case 'next':
                     this.next();
-                break;
+                    break;
+                case 'last':
+                    this.last();
+                    break;
             };
         });
 
@@ -318,5 +404,3 @@ class Pagination {
         return this;
     };
 };
-
-module.exports = Pagination;

@@ -1,5 +1,4 @@
 const { createCanvas, registerFont, Image, CanvasRenderingContext2D } = require('canvas');
-const Frame = require('canvas-to-buffer');
 
 registerFont(`${__dirname}/../../../assets/fonts/Poppins-Black.otf`, { family: 'Poppins' });
 registerFont(`${__dirname}/../../../assets/fonts/Poppins-Bold.otf`, { family: 'Poppins' });
@@ -11,7 +10,7 @@ registerFont(`${__dirname}/../../../assets/fonts/Poppins-SemiBold.otf`, { family
  * Create rank card.
  */
 
-class RankCard {
+module.exports = class RankCard {
     constructor() {
         this.tag = null;
         this.avatar = null;
@@ -19,112 +18,150 @@ class RankCard {
         this.currentXp = 0;
         this.requiredXp = 0;
 
+        /**
+         * @private
+         */
         this.width = 1080;
+        /**
+         * @private
+         */
         this.height = 325;
 
-        this.backgroundRadius = 25;
+        /**
+         * @private
+         */
+        this.backgroundRadius = 40;
 
+        /**
+         * @private
+         */
         this.colorsObject = {
-            progressBar: '#36393E',
-            background: '#19191b',
-            main: '#5865f2'
+            progressBar: '#363636',
+            background: '#191919',
+            main: '#5865F2'
         };
 
+        /**
+         * @private
+         */
         this.shadowObject = {
-            size: 10,
-            color: 'rgba(0, 0, 0, 0.2)'
+            size: 15,
+            color: 'rgba(0, 0, 0, 0.35)'
         };
 
+        /**
+         * @private
+         */
         this.levelObject = {
-            x: 875 + this.shadowObject.size,
-            y: 40 + this.shadowObject.size,
+            x: 960,
+            y: 40,
+            text: 'level',
             textSize: 25,
             numberSize: 50,
-            sepSize: 60
+            sepSize: 40,
+            spacing: 20
         };
 
+        /**
+         * @private
+         */
         this.usernameObject = {
-            x: 260 + this.shadowObject.size,
-            y: 130 + this.shadowObject.size,
-            usernameSize: 50,
-            usernameColor: '#fff',
+            x: 280,
+            y: 140,
+            usernameSize: 45,
+            usernameColor: '#FFFFFF',
             font: 'bold',
-            discriminatorSize: 35,
-            discriminatorColor: '#A1A1A1',
             weight: 300,
             sepSize: 10
         };
 
+        /**
+         * @private
+         */
         this.progressObject = {
-            x: 900 + this.shadowObject.size,
-            y: 150 + this.shadowObject.size,
-            size: 30,
-            currentColor: '#fff',
+            x: 975,
+            y: 160,
+            size: 25,
+            currentColor: '#FFFFFF',
             requiredColor: '#A1A1A1'
         };
 
+        /**
+         * @private
+         */
         this.progressbarObject = {
-            x: 250 + this.shadowObject.size,
-            y: 200 + this.shadowObject.size,
-            width: 750,
+            x: 280,
+            y: 205,
+            width: 720,
             height: 35,
-            radius: 25
+            radius: 25,
+            minWidth: 36
         };
 
+        /**
+         * @private
+         */
         this.avatarObject = {
-            x: 45 + this.shadowObject.size,
-            y: 70 + this.shadowObject.size,
-            xSize: 175,
-            ySize: 175
+            x: 50,
+            y: this.height / 4,
+            xSize: 160,
+            ySize: 160
         };
     };
 
     /**
      * Draw the rank card shadow.
      * @private
-     * @returns {CanvasRenderingContext2D}
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawShadow() {
-        this.ctx.shadowColor = this.shadowObject.color;
-        this.ctx.shadowBlur = this.shadowObject.size;
+        const { color, size } = this.shadowObject
+
+        this.ctx.shadowColor = color;
+        this.ctx.shadowBlur = size;
         this.ctx.shadowOffsetX = 0;
         this.ctx.shadowOffsetY = 0;
-    
-        this.ctx.save();
-    
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0)';
-        this.ctx.roundRect(this.shadowObject.size - 2, this.shadowObject.size - 2, this.width + 2, this.height + 2, 10).fill();
-    
+
         return this.ctx;
     };
 
     /**
      * Draw the background.
      * @private
-     * @returns {CanvasRenderingContext2D} The context
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawBackground() {
-        this.ctx.fillStyle = this.colorsObject.background;
-        this.ctx.roundRect(0, 0, this.width, this.height, this.backgroundRadius).fill();
-    
+        const { background } = this.colorsObject;
+        const { size } = this.shadowObject;
+
+        this.ctx.fillStyle = background;
+        this.ctx.roundRect(size, size, this.width, this.height, this.backgroundRadius).fill();
+
         return this.ctx;
     };
 
     /**
      * Draw the level.
      * @private
-     * @returns {CanvasRenderingContext2D}
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawLevel() {
-        this.ctx.font = `bold ${this.levelObject.numberSize}px Poppins`;
-        this.ctx.fillStyle = this.colorsObject.main;
-        this.ctx.fillText(this.level, this.levelObject.x + this.levelObject.sepSize, this.levelObject.y + this.levelObject.numberSize);
+        const { x, y, numberSize, sepSize, textSize, text, spacing } = this.levelObject;
+        const { size } = this.shadowObject;
+        const { main } = this.colorsObject;
+
+        const numberWidth = this.ctx.measureText(this.level.shortNumber()).width;
+
+        this.ctx.textAlign = 'right';
+        this.ctx.fillStyle = main;
+        this.ctx.font = `bold ${numberSize}px Poppins`;
+        this.ctx.fillText(this.level.shortNumber(), size + x + sepSize, size + y + numberSize);
     
-        this.ctx.font = `bold ${this.levelObject.textSize}px PoppinsSemiBold`;
-        this.ctx.fillText('level', this.levelObject.x - this.levelObject.textSize, this.levelObject.y + this.levelObject.numberSize);
+        this.ctx.font = `bold ${textSize}px PoppinsSemiBold`;
+        this.ctx.fillText(text, size + x + sepSize - numberWidth - spacing, size + y + numberSize);
     
         return this.ctx;
     };
@@ -132,21 +169,25 @@ class RankCard {
     /**
      * Draw the user.
      * @private
-     * @returns {CanvasRenderingContext2D}
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawUser() {
-        if (this.tag[0].length > 32) this.tag[0] = this.tag[0].slice(0, 29) + '...';
-        
-        this.ctx.font = `bold ${this.usernameObject.usernameSize}px Poppins`;
-        this.ctx.fillStyle = this.usernameObject.usernameColor;
-        this.ctx.fillText(this.tag[0], this.usernameObject.x, this.usernameObject.y + this.usernameObject.usernameSize);
-        
-        const usernameLength = this.ctx.measureText(this.tag[0]).width;
+        const { usernameSize, usernameColor, y } = this.usernameObject;
+        const { size } = this.shadowObject;
+        const { x } = this.progressbarObject;
+
+
+        this.ctx.font = `bold ${usernameSize}px PoppinsSemiBold`;
+        const maxWidthCondition = this.ctx.measureText(this.username).width > this.ctx.measureText('@@@@@@@@@').width;
+        while (this.ctx.measureText(this.username).width > this.ctx.measureText('@@@@@@@@@').width) {
+            this.username = this.username.slice(0, -1);
+        };
     
-        this.ctx.font = `300 ${this.usernameObject.discriminatorSize}px PoppinsLight`;
-        this.ctx.fillStyle = this.usernameObject.discriminatorColor;
-        this.ctx.fillText(this.tag[1], this.usernameObject.x + usernameLength + this.usernameObject.sepSize, this.usernameObject.y + this.usernameObject.usernameSize);
+        this.ctx.fillStyle = usernameColor;
+    
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(maxWidthCondition ? this.username + '...' : this.username, size + x, size + y + usernameSize);
     
         return this.ctx;
     };
@@ -154,26 +195,23 @@ class RankCard {
     /**
      * Draw the progress.
      * @private
-     * @returns {CanvasRenderingContext2D}
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawProgress() {
-        let decal = 0;
-
-        if (this.ctx.measureText(this.currentXp).width > this.ctx.measureText('999').width) decal = -(this.ctx.measureText('999').width - this.ctx.measureText(this.currentXp.substring(3)).width) + 4;
-    
-        const secondDecal = this.ctx.measureText(' XP').width;
-    
-        const x = this.progressObject.x;
-        const y = this.progressObject.y;
-    
-        this.ctx.font = `bold ${this.progressObject.size}px PoppinsLight`;
-        this.ctx.fillStyle = this.progressObject.currentColor;
-        this.ctx.fillText(`${this.currentXp}`, x + decal - secondDecal, y + this.progressObject.size);
+        const { x, width } = this.progressbarObject;
+        const { requiredColor, size, y, currentColor } = this.progressObject;
         
-        this.ctx.font = `${this.progressObject.size}px PoppinsLight`;
-        this.ctx.fillStyle = this.progressObject.requiredColor;
-        this.ctx.fillText(`/${this.requiredXp}`, x + decal - secondDecal + this.ctx.measureText(this.currentXp).width, y + this.progressObject.size);
+        this.progressObject.currentXpText = `${this.currentXp.shortNumber()}`;
+        this.progressObject.requiredXpText = `/${this.requiredXp.shortNumber()} xp`;
+
+        this.ctx.fillStyle = requiredColor;
+        this.ctx.font = `${size}px PoppinsSemiBold`;
+        this.ctx.fillText(this.progressObject.requiredXpText, this.shadowObject.size + x + width, this.shadowObject.size + y + size);
+    
+        this.ctx.fillStyle = currentColor;
+        this.ctx.font = `bold ${size}px PoppinsSemiBold`;
+        this.ctx.fillText(this.progressObject.currentXpText, this.shadowObject.size + x + width - this.ctx.measureText(this.progressObject.requiredXpText).width, this.shadowObject.size + y + size);
     
         return this.ctx;
     };
@@ -181,38 +219,50 @@ class RankCard {
     /**
      * Draw the progress bar.
      * @private
-     * @returns {CanvasRenderingContext2D}
+     * @returns {CanvasRenderingContext2D} The canvas context
      */
 
     drawProgressBar() {
-        this.ctx.fillStyle = this.colorsObject.progressBar;
-        this.ctx.roundRect(this.progressbarObject.x, this.progressbarObject.y, this.progressbarObject.width, this.progressbarObject.height, this.progressbarObject.radius).fill();
-    
-        this.ctx.fillStyle = this.colorsObject.main;
-        this.ctx.roundRect(this.progressbarObject.x, this.progressbarObject.y, this.progressbarObject.width * this.currentXp / this.requiredXp, this.progressbarObject.height, this.progressbarObject.radius).fill();
-    
+        const { x, y, width, height, radius, minWidth } = this.progressbarObject;
+        const { progressBar, main } = this.colorsObject;
+        const { size } = this.shadowObject;
+
+        this.ctx.fillStyle = progressBar;
+        this.ctx.roundRect(size + x, size + y, width, height, radius).fill();
+
+        this.progressbarObject.currentWidth = width * this.currentXp / this.requiredXp;
+        if (this.progressbarObject.currentWidth > width) this.progressbarObject.currentWidth = width;
+        if (this.progressbarObject.currentWidth < minWidth) this.progressbarObject.currentWidth = minWidth;
+        
+        this.ctx.fillStyle = main;
+        this.ctx.roundRect(size + x, size + y, this.progressbarObject.currentWidth, height, radius).fill();
+
         return this.ctx;
     };
 
     /**
-     * Set the tag.
-     * @param {String} tag The tag
-     * @returns {RankCard}
+     * Set the username.
+     * @param {String} username - The user's name.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the username is not provided.
+     * @throws {TypeError} If the username is not a string.
      */
 
-    setTag(tag) {
-        if (!tag) throw new RangeError('[RANKCARD] Tag not provided.');
-        if (typeof tag !== 'string') throw new TypeError('[RANKCARD] Tag must be a non-empty string.');
+    setUsername(username) {
+        if (!username) throw new RangeError('[RANKCARD] Username not provided.');
+        if (typeof username !== 'string') throw new TypeError('[RANKCARD] Username must be a non-empty string.');
 
-        this.tag = [tag.split('#')[0], `#${tag.split('#')[1]}`];
+        this.username = username;
 
         return this;
     };
 
     /**
      * Set the avatar.
-     * @param {String} avatar The avatar
-     * @returns {RankCard}
+     * @param {String} avatar - The URL of the avatar image.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the avatar is not provided.
+     * @throws {TypeError} If the avatar is not a string.
      */
 
     setAvatar(avatar) {
@@ -226,8 +276,10 @@ class RankCard {
 
     /**
      * Set the level.
-     * @param {Number} level The level
-     * @returns {RankCard}
+     * @param {Number} level - The user's level.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the level is not provided.
+     * @throws {TypeError} If the level is not a number.
      */
 
     setLevel(level) {
@@ -241,8 +293,10 @@ class RankCard {
 
     /**
      * Set the current XP.
-     * @param {Number} xp The xp
-     * @returns {RankCard}
+     * @param {Number} xp - The user's current XP.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the current XP is not provided.
+     * @throws {TypeError} If the current XP is not a number.
      */
 
     setCurrentXp(xp) {
@@ -256,8 +310,10 @@ class RankCard {
 
     /**
      * Set the required XP.
-     * @param {Number} xp The xp
-     * @returns {RankCard}
+     * @param {Number} xp - The XP required for the next level.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the required XP is not provided.
+     * @throws {TypeError} If the required XP is not a number.
      */
 
     setRequiredXp(xp) {
@@ -271,8 +327,9 @@ class RankCard {
 
     /**
      * Set the color.
-     * @param {String} color The color
-     * @returns {RankCard}
+     * @param {String} color - The main color used for primary elements.
+     * @returns {RankCard} The current instance of RankCard.
+     * @throws {RangeError} If the color is not provided.
      */
 
     setColor(color) {
@@ -284,52 +341,58 @@ class RankCard {
     };
 
     /**
-     * Draw the rank card.
-     * @returns {Buffer}
+     * Build the rank card.
+     * @returns {Promise<Buffer>} A promise that resolves with the rank card image buffer.
+     * @throws {RangeError} If any required property is not provided.
      */
 
     build() {
-        if (!this.tag) throw new RangeError('[RANKCARD] Tag not provided.');
+        if (!this.username) throw new RangeError('[RANKCARD] Username not provided.');
         if (!this.avatar) throw new RangeError('[RANKCARD] Avatar not provided.');
         if (!this.level && this.level !== 0) throw new RangeError('[RANKCARD] Level not provided.');
         if (!this.currentXp && this.currentXp !== 0) throw new RangeError('[RANKCARD] Current XP not provided.');
         if (!this.requiredXp && this.requiredXp !== 0) throw new RangeError('[RANKCARD] Required XP not provided.');
 
-        const canvas = createCanvas(this.width + (this.shadowObject.size * 2), this.height + (this.shadowObject.size * 2));
+        const { size } = this.shadowObject;
+        const { x, width } = this.progressbarObject;
     
+        const canvas = createCanvas(this.width + (size * 2), this.height + (size * 2));
         const ctx = canvas.getContext('2d');
-
+        /**
+         * @private
+         */
         this.ctx = ctx;
     
-        return new Promise((resolve, _) => {
-            this.drawShadow();
-            this.drawBackground();
-            this.drawLevel();
-            this.drawUser();
-            this.drawProgress();
-            this.drawProgressBar();
+        this.drawShadow();
+        this.drawBackground();
+        this.drawUser();
+        this.drawLevel();
+        this.drawProgress();
+        this.drawProgressBar();
     
+        this.avatarObject.x = size + (this.width - x - width);
     
-            const avatar = new Image();
+        const avatar = new Image();
+        avatar.src = this.avatar;
     
-            avatar.src = this.avatar;
+        return new Promise((resolve, reject) => {
+            try {
+                avatar.onload = () => {
+                    const { xSize, ySize } = this.avatarObject;
+                    const { size } = this.shadowObject;
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.avatarObject.x + xSize / 2, (this.height / 2) - (ySize / 2) + size + ySize / 2, xSize / 2, 0, Math.PI * 2, false);
+                    this.ctx.clip();
+                    this.ctx.drawImage(avatar, this.avatarObject.x, (this.height / 2) - (ySize / 2) + size, xSize, ySize);
     
-            avatar.onload = () => {
-                ctx.save();
-                ctx.beginPath();
+                    resolve(canvas.toBuffer());
+                };
     
-                ctx.arc(this.avatarObject.x + this.avatarObject.xSize / 2, this.avatarObject.y + this.avatarObject.ySize / 2, this.avatarObject.xSize / 2, 0, Math.PI * 2, false);
-    
-                ctx.clip();
-    
-                ctx.drawImage(avatar, this.avatarObject.x, this.avatarObject.y, this.avatarObject.xSize, this.avatarObject.ySize);
-    
-                ctx.restore();
-    
-                resolve((new Frame(canvas)).toBuffer());
+                avatar.onerror = () => reject(new Error('[RANKCARD] Failed to load image.'));
+            } catch (error) {
+                reject(error);
             };
         });
-    };
+    }
 };
-
-module.exports = RankCard;

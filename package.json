@@ -1,7 +1,7 @@
 {
   "name": "discord-sey",
-  "version": "4.7.0",
-  "description": "An easy multi-tool package for Discord.JS v13.",
+  "version": "5.0.0",
+  "description": "An easy multi-tool package for Discord.JS v14.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,12 +18,8 @@
   "author": "sey.#4485",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^2.9.1",
-    "canvas-to-buffer": "^2.0.0",
-    "discord.js": "^13.7.0",
-    "ts-node": "^10.7.0",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.6.4"
+    "canvas": "^2.11.2",
+    "discord.js": "^14.15.3"
   },
   "bugs": {
     "url": "https://github.com/seyiooo/discord-sey/issues"

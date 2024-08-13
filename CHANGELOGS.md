@@ -45,3 +45,8 @@
 
 # 4.5.7
 - Bug fixes.
+
+# 5.0.0
+- Support discord.js@14.15.3
+- Some classes has been removed
+- RankCard relook
