@@ -46,10 +46,10 @@ client.on('messageCreate', (message) => {
     .setPages(embeds) // Set the pages (required)
     .addPage(new EmbedBuilder().setTitle('Page 3')) // Add one page (optional)
     .addPages([new EmbedBuilder().setTitle('Page 4'), new EmbedBuilder().setTitle('Page 5')]) // Add more pages (optional)
-    .setEmojis(['⏪', '⏩']) // Set the previous and next buttons (optional, default: ['⬅️', '➡️'])
+    .setLabels(['◀️', '▶️'], ['⏪', '⏩']) // Set the previous and next buttons, second array is for first and last buttons, not required (optional, default: ['⬅️', '➡️'])
     .setTimeout(60000) // One minute timeout (optional, default: null)
     .addTimeout(60000) // Add timeout (optional)
-    .setStyle('SECONDARY') // Set the buttons style (optional, default: "PRIMARY")
+    .setStyle(ButtonStyle.Secondary) // Set the buttons style (optional, default: "PRIMARY")
     .start(message); // Create the pagination (required)
 
     if (message.content.startsWith('!previous')) pages.previous(); // Pagination by commands (optional)
@@ -74,10 +74,10 @@ client.on('interactionCreate', (interaction) => {
     .setPages(embeds) // Set the pages (required)
     .addPage(new EmbedBuilder().setTitle('Page 3')) // Add one page (optional)
     .addPages([new EmbedBuilder().setTitle('Page 4'), new EmbedBuilder().setTitle('Page 5')]) // Add more pages (optional)
-    .setEmojis(['⏪', '⏩']) // Set the previous and next buttons (optional, default: ['⬅️', '➡️'])
+    .setLabels(['◀️', '▶️'], ['⏪', '⏩']) // Set the previous and next buttons, second array is for first and last buttons, not required (optional, default: ['⬅️', '➡️'])
     .setTimeout(60000) // One minute timeout (optional, default: null)
     .addTimeout(60000) // Add timeout (optional)
-    .setStyle('SECONDARY') // Set the buttons style (optional, default: "PRIMARY")
+    .setStyle(ButtonStyle.Secondary) // Set the buttons style (optional, default: "PRIMARY")
     .start(interaction); // Create the pagination (required)
 });
 
@@ -103,7 +103,7 @@ const { RankCard } = require('discord-sey');
 // Register the ready event
 client.on('messageCreate', async (message) => {
     const card = new RankCard()
-    .setTag(message.author.tag) // Set the tag (required)
+    .setUsername(message.author.username) // Set the username (required)
     .setAvatar(message.author.displatAvatarURL({ format: 'png' })) // Set the avatar (required)
     .setLevel(5) // Set the level (required)
     .setCurrentXp(50) // Set the current xp (required)

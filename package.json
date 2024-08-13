@@ -1,6 +1,6 @@
 {
   "name": "discord-sey",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "An easy multi-tool package for Discord.JS v14.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "discordjs",
     "discord"
   ],
-  "author": "sey.#4485",
+  "author": "sey.ioo",
   "license": "MIT",
   "dependencies": {
     "canvas": "^2.11.2",
