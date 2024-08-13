@@ -1,6 +1,6 @@
 <div align="center"><h1>Discord-Sey</h1></div>
-An easy multi-tool package for Discord.JS v13 !
-The package is not finished, if you find a bug, contact sey.#4485 !
+An easy multi-tool package for Discord.JS v14 !
+The package is not finished, if you find a bug, contact sey.ioo !
 
 # Summary
 - [Requirements](#requirements)

@@ -1,6 +1,6 @@
 {
   "name": "discord-sey",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "An easy multi-tool package for Discord.JS v14.",
   "main": "index.js",
   "scripts": {
